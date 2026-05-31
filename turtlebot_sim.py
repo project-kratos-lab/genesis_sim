@@ -3,7 +3,6 @@ from gs_ros.gs_ros_bridge import GsRosBridge
 import rclpy
 from rclpy.node import Node
 
-
 from geometry_msgs.msg import Twist
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from sensor_msgs.msg import JointState
@@ -15,10 +14,10 @@ class CmdVelToJoints(Node):
     def __init__(self):
         super().__init__("cmd_vel_to_joints")
         self.sub = self.create_subscription(Twist, "cmd_vel", self.cmd_vel_callback, 10)
-        # Publish wheel velocities as JointState (has 'velocity' field) which
-        # the bridge expects and won't crash on.
-        self.jstate_pub = self.create_publisher(JointState, "/turtlebot/joint_states", 10)
-        self.jstate_pub_alt = self.create_publisher(JointState, "/robot/joint_states", 10)
+        
+        # FIXED: Publish wheel velocities to 'joint_commands' instead of 'joint_states'
+        self.jstate_pub = self.create_publisher(JointState, "/turtlebot/joint_commands", 10)
+        self.jstate_pub_alt = self.create_publisher(JointState, "/robot/joint_commands", 10)
         
         # Turtlebot3 Burger specs
         self.wheel_separation = 0.160
@@ -50,10 +49,6 @@ class CmdVelToJoints(Node):
         w = msg.angular.z
         
         # Differential drive kinematics
-        # v = (v_r + v_l) / 2
-        # w = (v_r - v_l) / w_sep
-        # v_r = w_wheel_r * w_rad
-        
         v_r = v + (w * self.wheel_separation / 2.0)
         v_l = v - (w * self.wheel_separation / 2.0)
         
@@ -61,18 +56,21 @@ class CmdVelToJoints(Node):
         w_r = v_r / self.wheel_radius
         w_l = v_l / self.wheel_radius
         
-        # Publish JointState with velocities (bridge uses 'velocity' attribute)
+        # Publish JointState with velocities
         js = JointState()
         js.header.stamp = self.get_clock().now().to_msg()
         left_name = f"{self.namespace}wheel_left_joint" if self.namespace else "wheel_left_joint"
         right_name = f"{self.namespace}wheel_right_joint" if self.namespace else "wheel_right_joint"
         js.name = [left_name, right_name]
+        
         # JointState field is 'velocity' (singular) and expects a list
         js.velocity = [w_l, w_r]
         try:
             self.get_logger().debug(f"Publishing joint_state: {js.name} vel={js.velocity}")
         except Exception:
             pass
+        
+        # Publish to the corrected command topics
         self.jstate_pub.publish(js)
         self.jstate_pub_alt.publish(js)
 

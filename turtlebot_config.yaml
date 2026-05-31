@@ -53,10 +53,13 @@ robots:
           kp: 50
           kv: 50
           command: velocity
-          "turtlebotwheel_right_joint":
+        # FIXED: Removed extra spaces so it aligns correctly with the left joint!
+        "turtlebotwheel_right_joint":  
           kp: 50
           kv: 50
           command: velocity
+
+    # ... (Keep the rest of your pos, euler, visualization, material, and sensor configs exactly the same below this line) ...
 
     morph:
       path: "turtlebot3_description/urdf/turtlebot3_burger.urdf"
