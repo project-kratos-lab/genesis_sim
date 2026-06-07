@@ -26,6 +26,7 @@ scene:
         intensity: 5.0
 
   rigid_config:
+    gravity: [0.0, 0.0, -9.81]
     enable_collision: true
     enable_joint_limit: true
     enable_self_collision: false
@@ -53,16 +54,13 @@ robots:
           kp: 50
           kv: 50
           command: velocity
-        # FIXED: Removed extra spaces so it aligns correctly with the left joint!
-        "turtlebotwheel_right_joint":  
+        "turtlebotwheel_right_joint":
           kp: 50
           kv: 50
           command: velocity
 
-    # ... (Keep the rest of your pos, euler, visualization, material, and sensor configs exactly the same below this line) ...
-
     morph:
-      path: "turtlebot3_description/urdf/turtlebot3_burger.urdf"
+      path: "turtlebot3_description/urdf/turtlebot3_waffle.urdf"
       pos: [0.0, 0.0, 0.0]
       euler: [0.0, 0.0, 0.0]
       quat: null
@@ -75,7 +73,7 @@ robots:
       fixed: false
       prioritize_urdf_material: false
       merge_fixed_links: false
-      links_to_keep: ["turtlebotbase_scan"]
+      links_to_keep: ["turtlebotbase_scan", "turtlebotcamera_link"]
 
     material:
       type: rigid
@@ -93,7 +91,7 @@ robots:
     sensors:
     - name: lidar
       general_sensor_options:
-        sensor_type: lidar
+        sensor_type: laser_scan
         delay: 0.0
         update_ground_truth_only: false
         draw_debug: false
@@ -110,8 +108,8 @@ robots:
         pos_offset: [0.0, 0.0, 0.0]
         euler_offset: [0.0, 0.0, 0.0]
       spherical_pattern:
-        fov: [360.0, 30.0]
-        n_points: [64, 128]
+        fov: [360.0, 1.0]
+        n_points: [2, 360]
       min_range: 0.12
       max_range: 3.5
       draw_point_radius: 0.03
@@ -121,3 +119,37 @@ robots:
       add_noise: false
       noise_mean: 0.0
       noise_std: 0.01
+
+    - name: r200_camera
+      general_sensor_options:
+        sensor_type: cam
+        delay: 0.0
+        update_ground_truth_only: false
+        draw_debug: false
+      ros_options:
+        frame_id: "turtlebotcamera_rgb_optical_frame"
+        frequency: 15.0
+        qos_history: keep_last
+        qos_depth: 10
+        qos_reliability: reliable
+        qos_durability: volatile
+      rigid_options:
+        link: "turtlebotcamera_link"
+        pos_offset: [0.0, 0.0, 0.0]
+        euler_offset: [90.0, 0.0, -90.0]
+      camera_types: [rgb, depth]
+      res: [640, 480]
+      fov: 60.0
+      near: 0.05
+      far: 10.0
+      aperture: 2.8
+      denoise: false
+      spp: 4
+      model: pinhole
+      focus_dist: 0.0
+      gui: false
+      add_noise: false
+      noise_mean: 0.0
+      noise_std: 0.01
+
+
