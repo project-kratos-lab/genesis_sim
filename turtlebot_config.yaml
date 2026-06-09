@@ -50,11 +50,11 @@ robots:
       joint_control_topic: joint_control
       joint_control_topic_frequency: 50
       joint_properties:
-        "turtlebotwheel_left_joint":
+        "wheel_left_joint":
           kp: 50
           kv: 50
           command: velocity
-        "turtlebotwheel_right_joint":
+        "wheel_right_joint":
           kp: 50
           kv: 50
           command: velocity
@@ -73,7 +73,7 @@ robots:
       fixed: false
       prioritize_urdf_material: false
       merge_fixed_links: false
-      links_to_keep: ["turtlebotbase_scan", "turtlebotcamera_link"]
+      links_to_keep: ["base_scan", "camera_link"]
 
     material:
       type: rigid
@@ -96,7 +96,7 @@ robots:
         update_ground_truth_only: false
         draw_debug: false
       ros_options:
-        frame_id: "turtlebotbase_scan"
+        frame_id: "base_scan"
         frequency: 10.0
         topic: scan
         qos_history: keep_last
@@ -104,7 +104,7 @@ robots:
         qos_reliability: reliable
         qos_durability: volatile
       rigid_options:
-        link: "turtlebotbase_scan"
+        link: "base_scan"
         pos_offset: [0.0, 0.0, 0.0]
         euler_offset: [0.0, 0.0, 0.0]
       spherical_pattern:
@@ -127,14 +127,14 @@ robots:
         update_ground_truth_only: false
         draw_debug: false
       ros_options:
-        frame_id: "turtlebotcamera_rgb_optical_frame"
+        frame_id: "camera_rgb_optical_frame"
         frequency: 15.0
         qos_history: keep_last
         qos_depth: 10
         qos_reliability: reliable
         qos_durability: volatile
       rigid_options:
-        link: "turtlebotcamera_link"
+        link: "camera_link"
         pos_offset: [0.0, 0.0, 0.0]
         euler_offset: [90.0, 0.0, -90.0]
       camera_types: [rgb, depth]
