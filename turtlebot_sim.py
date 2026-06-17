@@ -199,9 +199,9 @@ class OdometryPublisher(Node):
         odom_msg.pose.pose.orientation.z = float(qz)
         odom_msg.pose.pose.orientation.w = float(qw)
 
-        odom_msg.twist.twist.linear.x = vx
-        odom_msg.twist.twist.linear.y = vy
-        odom_msg.twist.twist.angular.z = angular_z
+        odom_msg.twist.twist.linear.x = float(vx)
+        odom_msg.twist.twist.linear.y = float(vy)
+        odom_msg.twist.twist.angular.z = float(angular_z)
 
         self.odom_pub.publish(odom_msg)
 
