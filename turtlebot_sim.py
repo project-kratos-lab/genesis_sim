@@ -141,7 +141,9 @@ class OdometryPublisher(Node):
         # Convert Genesis quat (w, x, y, z) -> ROS quat (x, y, z, w)
         qx, qy, qz, qw = quat_gs[1], quat_gs[2], quat_gs[3], quat_gs[0]
 
-        now = self.get_clock().now().to_msg()
+        now = self.ros_bridge.scene_manager.latest_timestamp
+        if now is None:
+            now = self.get_clock().now().to_msg()
 
         # --- Broadcast TF: odom -> base_footprint ---
         t = TransformStamped()
@@ -224,6 +226,7 @@ def launch_robot_state_publisher():
         "ros2", "run", "robot_state_publisher", "robot_state_publisher",
         "--ros-args",
         "-p", f"robot_description:={urdf_content}",
+        "-p", "use_sim_time:=True",
         "-r", "joint_states:=/turtlebot/joint_states",
     ]
 
